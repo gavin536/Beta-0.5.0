@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ChayBot Config</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      padding: 30px;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      background: #222;
+      color: white;
+      border: 1px solid #555;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 16px;
+      background: purple;
+      color: white;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>ChayBot Config Panel</h1>
+
+  <h2>Twitch Authentication</h2>
+  <button onclick="loginWithTwitch()">Login with Twitch</button>
+
+  <label>Twitch Channel</label>
+  <input id="channel">
+
+  <label>OpenAI API Key</label>
+  <input id="openai">
+
+  <label>Google TTS JSON Path</label>
+  <input id="googleKey">
+
+  <label>Voice ID (e.g. en-US-Studio-M)</label>
+  <input id="voiceId">
+
+  <label>Aliases (comma separated)</label>
+  <input id="aliases">
+
+  <label>Custom Prompt</label>
+  <textarea id="prompt" rows="4"></textarea>
+
+  <label>Model</label>
+  <input id="model">
+
+  <button onclick="save()">Save Config</button>
+
+  <script>
+    function loginWithTwitch() {
+      window.location.href = "/auth/twitch";
+    }
+
+    async function load() {
+      const res = await fetch('/config');
+      const data = await res.json();
+      document.getElementById('channel').value = data.twitch_channel || '';
+      document.getElementById('openai').value = data.openai_key || '';
+      document.getElementById('googleKey').value = data.google_credentials || '';
+      document.getElementById('voiceId').value = data.voice_id || '';
+      document.getElementById('aliases').value = (data.aliases || []).join(', ');
+      document.getElementById('prompt').value = data.custom_prompt || '';
+      document.getElementById('model').value = data.model || 'gpt-4';
+    }
+
+    async function save() {
+      const payload = {
+        twitch_channel: document.getElementById('channel').value,
+        openai_key: document.getElementById('openai').value,
+        google_credentials: document.getElementById('googleKey').value,
+        voice_id: document.getElementById('voiceId').value,
+        aliases: document.getElementById('aliases').value.split(',').map(s => s.trim()),
+        custom_prompt: document.getElementById('prompt').value,
+        model: document.getElementById('model').value
+      };
+
+      const res = await fetch('/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        alert('✅ Config saved!');
+      } else {
+        alert('❌ Failed to save config.');
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

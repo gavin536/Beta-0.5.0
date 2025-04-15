@@ -1,0 +1,10 @@
+{
+  "twitch_oauth": "oauth:your_token_here",
+  "twitch_channel": "your_channel_name",
+  "openai_key": "sk-your-key-here",
+  "google_credentials": "./google-cloud-key.json",
+  "voice_id": "en-US-Studio-M",
+  "aliases": ["bot", "queen", "ai", "chaylithra"],
+  "custom_prompt": "You are a smart, funny, flirty AI who loves teasing Twitch viewers.",
+  "model": "gpt-4"
+}
